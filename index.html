@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Kalkulator Pastel</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ANIMATED BACKGROUND */
+body {
+  background: linear-gradient(270deg, #f7f4ff, #ffd6e8, #c9f7e3, #c9d6ff);
+  background-size: 800% 800%;
+  animation: gradientMove 10s ease infinite;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* animasi background */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* kalkulator */
+.calculator {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 25px;
+  width: 260px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+}
+
+/* title */
+.title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  color: #6c63ff;
+}
+
+/* display */
+.display {
+  background: #f0eeff;
+  color: #333;
+  padding: 14px;
+  border-radius: 15px;
+  text-align: right;
+  margin-bottom: 15px;
+  min-height: 70px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+/* history */
+#history {
+  font-size: 12px;
+  color: #888;
+  word-break: break-word;
+}
+
+/* result SAFE WRAP */
+#result {
+  font-size: 30px;
+  font-weight: 500;
+  color: #2f2f2f;
+
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  line-height: 1.2;
+}
+
+/* buttons */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+  transition: 0.2s;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.08);
+}
+
+/* hover */
+button:hover {
+  transform: translateY(-1px);
+}
+
+/* click */
+button:active {
+  transform: scale(0.95);
+}
+
+/* angka */
+.circle {
+  background: #c9f7e3;
+  border-radius: 50%;
+  height: 50px;
+  width: 50px;
+  color: #2f6b57;
+}
+
+/* operator */
+.oval {
+  background: #ffd6e8;
+  border-radius: 25px;
+  height: 50px;
+  color: #7a3d2e;
+}
+
+/* equals */
+.equals {
+  background: #b8f5b1;
+  grid-row: span 2;
+  height: 110px;
+  color: #2d6a2d;
+}
+
+/* zero */
+.zero {
+  grid-column: span 2;
+  width: 100%;
+  border-radius: 25px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="calculator">
+  <div class="title">Kalkulator</div>
+
+  <div class="display">
+    <div id="history"></div>
+    <div id="result">0</div>
+  </div>
+
+  <div class="buttons">
+    <button class="oval" onclick="clearAll()">C</button>
+    <button class="oval" onclick="deleteLast()">DEL</button>
+    <button class="oval" onclick="append('/')">/</button>
+    <button class="oval" onclick="append('*')">*</button>
+
+    <button class="circle" onclick="append('7')">7</button>
+    <button class="circle" onclick="append('8')">8</button>
+    <button class="circle" onclick="append('9')">9</button>
+    <button class="oval" onclick="append('-')">-</button>
+
+    <button class="circle" onclick="append('4')">4</button>
+    <button class="circle" onclick="append('5')">5</button>
+    <button class="circle" onclick="append('6')">6</button>
+    <button class="oval" onclick="append('+')">+</button>
+
+    <button class="circle" onclick="append('1')">1</button>
+    <button class="circle" onclick="append('2')">2</button>
+    <button class="circle" onclick="append('3')">3</button>
+    <button class="oval equals" onclick="calculate()">=</button>
+
+    <button class="circle zero" onclick="append('0')">0</button>
+    <button class="circle" onclick="append('.')">.</button>
+  </div>
+</div>
+
+<script>
+let currentInput = "";
+
+/* append */
+function append(value) {
+  currentInput += value;
+  updateDisplay(currentInput);
+}
+
+/* update display + auto shrink */
+function updateDisplay(value) {
+  const result = document.getElementById("result");
+  currentInput = value;
+  result.innerText = currentInput;
+
+  if (currentInput.length > 12) {
+    result.style.fontSize = "24px";
+  } 
+  if (currentInput.length > 18) {
+    result.style.fontSize = "20px";
+  } 
+  if (currentInput.length <= 12) {
+    result.style.fontSize = "30px";
+  }
+}
+
+/* clear */
+function clearAll() {
+  currentInput = "";
+  document.getElementById("result").innerText = "0";
+  document.getElementById("history").innerText = "";
+  document.getElementById("result").style.fontSize = "30px";
+}
+
+/* delete */
+function deleteLast() {
+  currentInput = currentInput.slice(0, -1);
+  updateDisplay(currentInput || "0");
+}
+
+/* calculate */
+function calculate() {
+  try {
+    let result = eval(currentInput);
+
+    document.getElementById("history").innerText = currentInput + " =";
+    updateDisplay(result.toString());
+
+    currentInput = result.toString();
+  } catch {
+    document.getElementById("result").innerText = "Error";
+    currentInput = "";
+  }
+}
+</script>
+
+</body>
+</html>
